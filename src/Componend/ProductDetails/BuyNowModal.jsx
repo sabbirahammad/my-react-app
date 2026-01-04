@@ -66,3 +66,4 @@ const BuyNowModal = ({ isOpen, onClose, product, qty = 1, size = 'M', showSucces
 export default BuyNowModal;
 
 
+

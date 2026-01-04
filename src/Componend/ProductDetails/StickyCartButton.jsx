@@ -35,3 +35,4 @@ const StickyCartButton = ({ price, onAddToCart }) => {
 };
 
 export default StickyCartButton;
+

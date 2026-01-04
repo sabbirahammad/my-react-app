@@ -1,28 +1,36 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ProductCard = ({ id, name, price, oldPrice, image }) => {
+const ProductCard = ({ id, name, price, oldPrice, image, category }) => {
   const navigate = useNavigate();
-  const discount = oldPrice - price;
+
+  // যদি image একটি array হয় তাহলে প্রথম ছবি নাও, না হলে single image
+  const displayImage = Array.isArray(image)
+    ? image[0]
+    : image || '/fallback.jpg'; // fallback যদি image না থাকে
+
+  const discount = oldPrice && price ? oldPrice - price : 0;
 
   const handleBuyNow = () => {
-    navigate(`/product/${id}`, {
+    navigate(`/products/${id}`, {
       state: {
-        id,
-        name,
-        price,
-        oldPrice,
-        image,
+        highlightId: id,
+        category: category,
       },
     });
   };
 
+  const handleViewClick = (e) => {
+    e.stopPropagation();
+    navigate(`/product/${id}`);
+  };
+
   return (
-    <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300">
+    <div className="bg-neutral-50 rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300" style={{ backgroundColor: '#F9F9F9' }}>
       {/* ✅ Product Image */}
       <div className="relative">
         <img
-          src={image}
+          src={displayImage}
           alt={name}
           className="w-full h-64 object-cover"
         />
@@ -33,20 +41,20 @@ const ProductCard = ({ id, name, price, oldPrice, image }) => {
 
       {/* ✅ Product Info */}
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-white font-semibold text-base mb-1 truncate">{name}</h3>
+        <h3 className="font-semibold text-base mb-1 truncate" style={{ color: '#374151' }}>{name}</h3>
 
-        <div className="text-xs text-center text-gray-400 bg-gray-800 py-1 rounded mb-2">
-          Save ৳{discount}
+        <div className="text-xs text-center py-1 rounded mb-2" style={{ color: '#6B7280', backgroundColor: '#F3F4F6' }}>
+          Save ৳{discount || 0}
         </div>
 
         <div className="text-center mb-3">
-          <span className="line-through text-gray-600 mr-2">৳{oldPrice}</span>
-          <span className="text-yellow-400 font-bold text-lg">৳{price}</span>
+          {oldPrice && <span className="line-through mr-2" style={{ color: '#9CA3AF' }}>৳{oldPrice}</span>}
+          <span className="font-bold text-lg" style={{ color: '#F59E0B' }}>৳{price}</span>
         </div>
 
-        {/* ✅ Buy Now Button */}
+        {/* ✅ View Details Button */}
         <button
-          onClick={handleBuyNow}
+          onClick={handleViewClick}
           className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm py-2 rounded mt-auto transition-colors flex items-center justify-center gap-2"
         >
           🛒 Buy Now

@@ -1,34 +1,82 @@
+// ✅ ProductGrid.jsx (updated for multiple images)
 import React, { useState } from 'react';
 import { useProduct } from '../../Context/UseContext';
 import { useLocation } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import ProductDetailsModal from './ProductDetailsModal';
 
-const ProductGrid = ({ searchQuery = '', selectedCategories = [] }) => {
+const ProductGrid = ({ searchQuery = '', selectedCategories = [], sortBy }) => {
   const { products, setCartItems } = useProduct();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 🔍 Get highlight ID from URL
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const highlightId = parseInt(queryParams.get('highlight'));
+  const state = location.state || {};
+  const highlightId = state.highlightId || null;
+  const selectedCategoryFromState = state.category || null;
 
-  // 🧠 Filter & sort products
   const filteredProducts = products
     .filter((p) => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || false;
+
       const matchesCategory =
-        selectedCategories.length === 0 || selectedCategories.includes(p.category);
+        selectedCategories.length > 0
+          ? selectedCategories.some(selectedCat => {
+              // Check if product category matches any selected category filter
+              return p.category?.toLowerCase() === selectedCat?.toLowerCase();
+            })
+          : selectedCategoryFromState
+          ? p.category === selectedCategoryFromState
+          : true;
+
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
+      // Always prioritize highlighted product
       if (a.id === highlightId) return -1;
       if (b.id === highlightId) return 1;
-      return 0;
+
+      // Apply sorting based on sortBy prop
+      switch (sortBy) {
+        case 'popularity':
+          // Sort by rating (assuming higher rating = more popular)
+          return (b.rating || 0) - (a.rating || 0);
+
+        case 'rating':
+          // Sort by average rating
+          return (b.rating || 0) - (a.rating || 0);
+
+        case 'newest':
+          // Sort by creation date (newest first)
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+
+        case 'oldest':
+          // Sort by creation date (oldest first)
+          return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+
+        case 'price-asc':
+          // Sort by price (low to high)
+          return (a.price || 0) - (b.price || 0);
+
+        case 'price-desc':
+          // Sort by price (high to low)
+          return (b.price || 0) - (a.price || 0);
+
+        case 'name-asc':
+          // Sort by name (A to Z)
+          return (a.name || '').localeCompare(b.name || '');
+
+        case 'name-desc':
+          // Sort by name (Z to A)
+          return (b.name || '').localeCompare(a.name || '');
+
+        case 'default':
+        default:
+          // Default sorting (no specific order, maintain original order)
+          return 0;
+      }
     });
 
-  // 🛒 Add to Cart
   const handleAddToCart = (product) => {
     setCartItems((prev) => {
       const exists = prev.find((item) => item.id === product.id);
@@ -40,7 +88,6 @@ const ProductGrid = ({ searchQuery = '', selectedCategories = [] }) => {
     });
   };
 
-  // 🔍 Modal control
   const openModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -62,13 +109,14 @@ const ProductGrid = ({ searchQuery = '', selectedCategories = [] }) => {
               className="cursor-pointer"
             >
               <ProductCard
-                {...product}
-                isHighlighted={product.id === highlightId}
-                onBuy={(e) => {
-                  e.stopPropagation();
-                  handleAddToCart(product);
-                }}
-              />
+  id={product.id}
+  name={product.name}
+  price={product.price}
+  oldPrice={product.oldPrice}
+  image={product.images} // ✅ updated: send full image array
+  category={product.category}
+  isHighlighted={product.id === highlightId}
+/>
             </div>
           ))
         ) : (
@@ -78,7 +126,6 @@ const ProductGrid = ({ searchQuery = '', selectedCategories = [] }) => {
         )}
       </div>
 
-      {/* Modal */}
       <ProductDetailsModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -90,6 +137,8 @@ const ProductGrid = ({ searchQuery = '', selectedCategories = [] }) => {
 };
 
 export default ProductGrid;
+
+
 
 
 

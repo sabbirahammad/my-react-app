@@ -36,3 +36,4 @@ const StickyBuyNowButton = ({ price, onAddToCart }) => {
 
 export default StickyBuyNowButton;
 
+

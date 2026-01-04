@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FiChevronUp } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
+// Components
 import DeliveryDropdown from './eliveryDropdown';
 import LanguageCurrencyDropdown from './LanguageCurrencyDropdown';
 import UserMenu from './UserMenu';
 import NavMenu from './NavMenu';
 import SearchBar from './SearchBar';
 import CartDropdown from '../Cart/CartDropDown';
-import MainsideManubar from '../Home/MainsideManubar';
-import { FiChevronUp } from 'react-icons/fi';
-import MobileNavManu from '../NavberSection/MobileNavManu'
-import { Link } from 'react-router-dom';
+import MobileNavManu from '../NavberSection/MobileNavManu';
 
-const Topbar = ({ setSidebarOpen }) => {
+const Topbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState({ code: 'BD', name: 'Bangladesh' });
@@ -20,8 +20,6 @@ const Topbar = ({ setSidebarOpen }) => {
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [showPicDropdown, setShowPicDropdown] = useState(false);
 
   useEffect(() => {
@@ -51,19 +49,9 @@ const Topbar = ({ setSidebarOpen }) => {
     }
   };
 
-  const toggleSidebar = (open) => {
-    setIsSidebarOpen(open);
-    if (setSidebarOpen) setSidebarOpen(open);
-  };
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((cat) => cat !== category) : [...prev, category]
-    );
-  };
-
   return (
     <div className={isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}>
+      {/* Top Utility Bar (Desktop Only) */}
       <motion.div
         className={`hidden md:flex text-sm px-6 py-3 justify-between items-center shadow-lg relative ${
           isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
@@ -111,16 +99,16 @@ const Topbar = ({ setSidebarOpen }) => {
         </div>
 
         <div className="flex items-center space-x-6">
-      <Link to={"/cart"}>
-               <motion.a
-            href="/register"
-            className=" text-white px-4 py-2 rounded-full transition-colors shadow-md hover:text-amber-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }} 
-          >
-            MANAGE MY ACCOUNT
-          </motion.a>
-      </Link>
+          <Link to={"/cart"}>
+            <motion.a
+              href="/register"
+              className="text-white px-4 py-2 rounded-full transition-colors shadow-md hover:text-amber-200"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              MANAGE MY ACCOUNT
+            </motion.a>
+          </Link>
           <UserMenu
             isDarkMode={isDarkMode}
             activeDropdown={activeDropdown}
@@ -128,39 +116,28 @@ const Topbar = ({ setSidebarOpen }) => {
             isSignedIn={isSignedIn}
             setIsSignedIn={setIsSignedIn}
           />
-          <motion.a
-            href="/register"
-            className=" text-white px-4 py-2 rounded-full hover:text-yellow-600 transition-colors shadow-md"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            LOGIN
-          </motion.a>
+         
         </div>
       </motion.div>
 
+      {/* Main Navigation Bar */}
       <nav
         className={`shadow-lg px-6 py-4 sticky top-0 z-40 transition-all duration-300 ${
           isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
         } ${isScrolled ? 'shadow-xl' : 'shadow-md'}`}
       >
         <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <button
-              className="md:hidden focus:outline-none"
-              aria-label="Toggle menu"
-              onClick={() => toggleSidebar(true)}
-            >
-              <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+          {/* Left: Logo */}
+          <div className="flex items-center">
+            <Link to={'/'}>
             <div className="text-sm md:text-2xl font-extrabold text-gray-600 tracking-tight cursor-pointer select-none">
-              ELITEPASS
+              ORIZIN
             </div>
+            </Link>
           </div>
 
-          <div className="hidden md:flex flex-1 justify-center" style={{ transform: 'translateX(-100px)' }}>
+          {/* Center: NavMenu (Desktop Only) */}
+          <div className="hidden md:flex md:flex-1 md:justify-center">
             <NavMenu
               isDarkMode={isDarkMode}
               activeDropdown={activeDropdown}
@@ -168,6 +145,7 @@ const Topbar = ({ setSidebarOpen }) => {
             />
           </div>
 
+          {/* Right: Search, Cart, Mobile Dropdown */}
           <div className="flex items-center space-x-4">
             <SearchBar isDarkMode={isDarkMode} />
 
@@ -179,49 +157,32 @@ const Topbar = ({ setSidebarOpen }) => {
               <CartDropdown isDarkMode={isDarkMode} isOpen={activeDropdown === 'cart'} />
             </div>
 
-            {/* Pic icon with dropdown - mobile only */}
+            {/* Pic Dropdown — Mobile Only */}
             <div className="relative block md:hidden">
-              <button onClick={() => setShowPicDropdown(!showPicDropdown)} className="text-white text-xl focus:outline-none">
-                <FiChevronUp className={`transition-transform ${showPicDropdown ? 'rotate-180' : ''}`} />
+              <button
+                onClick={() => setShowPicDropdown(!showPicDropdown)}
+                className="text-white text-xl focus:outline-none"
+                aria-label="More options"
+              >
+                <FiChevronUp className={`transition-transform duration-200 ${showPicDropdown ? 'rotate-180' : ''}`} />
               </button>
               {showPicDropdown && (
-                <div className="absolute right-0 mt-2 w-100 bg-gray-800 text-white rounded shadow-lg z-50 gap-6 h-auto">
-                  {/* <a href="/login" className="block px-4 py-2 text-sm hover:bg-black">🔐 Log In</a>
-                  <a href="/categories" className="block px-4 py-2 text-sm hover:bg-black">📁 Category</a> */}
-                <div className='mt-7 gap-12 ml-12'>
+                <div className="absolute right-0 mt-2 w-60 bg-gray-800 text-white rounded-lg shadow-xl z-50 p-4 animate-fadeIn">
+                  <div>
                     <MobileNavManu
-              isDarkMode={isDarkMode}
-              activeDropdown={activeDropdown}
-              setActiveDropdown={setActiveDropdown}
-            />
-                </div>
+                      isDarkMode={isDarkMode}
+                      activeDropdown={activeDropdown}
+                      setActiveDropdown={setActiveDropdown}
+                    />
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </nav>
-
-      {isSidebarOpen && (
-        <div className="fixed top-10 left-0 w-64 h-full bg-[#1a1a1a] z-40 p-4 overflow-y-auto transition-transform duration-300 md:hidden">
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={() => toggleSidebar(false)}
-              className="text-white text-lg hover:text-yellow-500"
-            >
-              ✕ Close
-            </button>
-          </div>
-          <MainsideManubar
-            selectedCategories={selectedCategories}
-            onCategoryChange={handleCategoryChange}
-            className="block md:hidden"
-          />
-        </div>
-      )}
     </div>
   );
 };
 
 export default Topbar;
-

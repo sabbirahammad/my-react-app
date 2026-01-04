@@ -30,3 +30,4 @@ const CategoryFilter = ({ selected, onChange }) => {
 };
 
 export default CategoryFilter;
+

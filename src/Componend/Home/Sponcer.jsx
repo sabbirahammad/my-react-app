@@ -40,34 +40,30 @@ const sponsors = [
 
 const SponsorMasonryBlockBG = () => {
   return (
-    <section className="bg-gray-900 py-12 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-white text-3xl font-semibold mb-10 text-center">
-          Our Sponsors
+    <section className="bg-gradient-to-br from-gray-900 via-black to-gray-800 py-14 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-center text-white text-3xl sm:text-4xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+          Our Valued Sponsors
         </h2>
 
-        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {sponsors.map(({ id, name, logo, link, description }) => (
             <a
               key={id}
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="block mb-6 rounded-lg overflow-hidden shadow-md bg-gray-800 p-6"
+              className="bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-cyan-500/30 hover:scale-[1.02] transition duration-300 flex flex-col items-center text-center"
               aria-label={`Visit ${name} website`}
             >
               <img
                 src={logo}
                 alt={`${name} logo`}
-                className="w-full object-contain max-h-28 mx-auto"
+                className="h-24 object-contain mb-4"
                 loading="lazy"
               />
-              <h3 className="text-white text-lg font-semibold mt-4 text-center">
-                {name}
-              </h3>
-              <p className="text-gray-400 text-sm text-center mt-1">
-                {description}
-              </p>
+              <h3 className="text-white text-lg font-semibold">{name}</h3>
+              <p className="text-gray-400 text-sm mt-1">{description}</p>
             </a>
           ))}
         </div>
@@ -77,4 +73,6 @@ const SponsorMasonryBlockBG = () => {
 };
 
 export default SponsorMasonryBlockBG;
+
+
 

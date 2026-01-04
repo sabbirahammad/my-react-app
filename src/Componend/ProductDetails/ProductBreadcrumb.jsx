@@ -20,3 +20,4 @@ const ProductBreadcrumb = ({ category = 'Men', productName }) => {
 };
 
 export default ProductBreadcrumb;
+

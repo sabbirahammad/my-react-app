@@ -21,7 +21,7 @@ const SearchBar = ({ isDarkMode }) => {
   };
 
   return (
-    <div className="relative w-full max-w-sm sm:max-w-md mx-auto z-50">
+    <div className="relative w-full md:w-auto mx-auto">
       <div className="relative">
         <input
           type="text"
@@ -80,5 +80,6 @@ const SearchBar = ({ isDarkMode }) => {
 };
 
 export default SearchBar;
+
 
 

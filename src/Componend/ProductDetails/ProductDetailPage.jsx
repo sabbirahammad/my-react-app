@@ -39,19 +39,19 @@ const ProductDetailPage = () => {
   const [showBuyNowModal, setShowBuyNowModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  useEffect(() => {
-    if (products.length > 0) {
-      const found = products.find((p) => p.id === parseInt(id));
-      setProduct(found);
-      if (found) {
-        addToRecentlyViewed(found);
-      }
-      if (found && found.id !== product?.id) {
-        window.scrollTo({ top: 0, behavior: 'auto' });
-      }
-      setLoading(false);
-    }
-  }, [products, id]);
+useEffect(() => {
+  if (products.length > 0) {
+    const found = products.find((p) => {
+      if (!p) return false;
+      const productId = p.id || p._id;
+      return productId?.toString() === id;
+    });
+    setProduct(found || null);
+    if (found) addToRecentlyViewed(found);
+    setLoading(false);
+  }
+}, [products, id]);
+
 
   if (loading) {
     return (
@@ -91,22 +91,14 @@ const ProductDetailPage = () => {
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-          <ProductGallery
-            images={[
-              product.image,
-              '/images/premium-tshirt-back.jpg',
-              '/images/premium-tshirt-close.jpg',
-            ]}
-            key={product.id}
-          />
+          <ProductGallery images={product.images || []} key={product.id} />
           <ProductInfo product={product} onAddToCart={handleAddToCart} />
 
           <div className="md:col-span-2 flex grid-cols-2 justify-between">
             <DeliveryDetails />
             <SellerInfoCard productName={product.name} />
-
           </div>
-      
+
           <div className="md:col-span-2">
             <ProductTabs
               description={product.description || 'No description available'}
@@ -125,7 +117,9 @@ const ProductDetailPage = () => {
           <ProductHighlights />
           <div className="flex items-center gap-4 text-xl mt-4">
             <span className="text-yellow-400 font-bold">৳{product.price}</span>
-            <span className="line-through text-gray-500 text-base">৳{product.oldPrice}</span>
+            {product.oldPrice && (
+              <span className="line-through text-gray-500 text-base">৳{product.oldPrice}</span>
+            )}
           </div>
           <LimitedTimeOffer durationInHours={2} />
         </div>
@@ -133,7 +127,8 @@ const ProductDetailPage = () => {
 
       <div className="bg-gray-900">
         <RatingsSummary />
-        <RelatedProducts />
+        <RelatedProducts currentProductId={product.id} />
+
         <StickyProductHeader product={product} onAddToCart={() => handleAddToCart(product)} />
         <BuyNowModal
           isOpen={showBuyNowModal}
@@ -151,13 +146,17 @@ const ProductDetailPage = () => {
         <YouMayAlsoLike currentProductId={product.id} />
         <FloatingPromoBanner />
         <TopProduct />
-        <Footer/>
+        <Footer />
       </div>
     </>
   );
 };
 
 export default ProductDetailPage;
+
+
+
+
 
 
 

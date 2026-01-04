@@ -27,7 +27,7 @@ const OrderSummary = ({ product, qty = 1, size = 'M' }) => {
           <p className="text-sm text-gray-400">Size: {size}</p>
           <p className="text-sm text-gray-400">Qty: {qty}</p>
           <p className="text-yellow-400 font-semibold mt-1">
-            Total: ৳{total}
+         Total: ৳{total}
           </p>
         </div>
       </div>
@@ -36,4 +36,5 @@ const OrderSummary = ({ product, qty = 1, size = 'M' }) => {
 };
 
 export default OrderSummary;
+
 

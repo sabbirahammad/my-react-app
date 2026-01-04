@@ -32,3 +32,4 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
 
 export default Pagination;
 
+

@@ -1,25 +1,67 @@
 import React, { useState } from 'react';
 import { useProduct } from '../../Context/UseContext';
 import SizeSelectModal from './SizeSelectModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../Context/GoogleAuth';
 
 const YouMayAlsoLike = ({ currentProductId }) => {
   const [showModal, setShowModal] = useState(false);
   const [productToBuy, setProductToBuy] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(false); // ✅ New state
+  const [successMessage, setSuccessMessage] = useState(false);
   const { products, addToCart } = useProduct();
+  const {token} =useAuth()
+  const navigate = useNavigate();
 
   const suggestedItems = products
-    .filter((p) => p.id !== currentProductId)
+    .filter((p) => (p._id || p.id) !== currentProductId)
     .sort(() => 0.5 - Math.random())
-    .slice(0, 10);
+    .slice(0, 10)
+    .map((p, idx) => ({
+      ...p,
+      id: p._id || p.id || idx,
+      name: p.name || p.title || 'Product',
+      price: p.price || 0,
+      oldPrice: p.oldPrice,
+      img:
+        (Array.isArray(p.images) && p.images[0]) ||
+        p.image ||
+        p.imageUrl ||
+        '/fallback-image.jpg',
+    }));
 
-  // ✅ Handle add to cart confirmation
-  const handleAddToCart = (finalProduct) => {
-    addToCart(finalProduct);
-    setShowModal(false);
-    setSuccessMessage(true);
-    setTimeout(() => setSuccessMessage(false), 2500); // hide after 2.5 sec
+  // Add to Cart handler with backend integration
+  const handleAddToCart = async (finalProduct) => {
+    // Check if user is authenticated
+    if (!token) {
+      navigate('/auth');
+      return;
+    }
+
+    // Add default size if not specified
+    const productWithSize = {
+      ...finalProduct,
+      size: finalProduct.size || 'M',
+      selectedSize: finalProduct.selectedSize || 'M'
+    };
+
+    try {
+      const result = await addToCart(productWithSize);
+
+      if (result.success) {
+        setShowModal(false);
+        setSuccessMessage(true);
+        setTimeout(() => setSuccessMessage(false), 2500);
+      } else {
+        console.error('Failed to add to cart:', result.message);
+        alert(`Failed to add to cart: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      setShowModal(false);
+      setSuccessMessage(false);
+      alert('Error adding product to cart. Please try again.');
+    }
   };
 
   return (
@@ -35,7 +77,7 @@ const YouMayAlsoLike = ({ currentProductId }) => {
             >
               <Link to={`/product/${item.id}`}>
                 <img
-                  src={item.image}
+                  src={item.img}
                   alt={item.name}
                   className="w-full h-[200px] object-cover cursor-pointer"
                 />
@@ -43,7 +85,9 @@ const YouMayAlsoLike = ({ currentProductId }) => {
               <div className="p-3">
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-yellow-400 font-bold text-sm">৳{item.price}</span>
-                  <span className="line-through text-gray-500 text-xs">৳{item.oldPrice}</span>
+                  {item.oldPrice && (
+                    <span className="line-through text-gray-500 text-xs">৳{item.oldPrice}</span>
+                  )}
                 </div>
               </div>
               <button
@@ -63,7 +107,7 @@ const YouMayAlsoLike = ({ currentProductId }) => {
         </div>
       </div>
 
-      {/* ✅ Success Message */}
+      {/* Success Message */}
       {successMessage && (
         <div className="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transition-all duration-300">
           ✅ Successfully added to cart!
@@ -82,6 +126,8 @@ const YouMayAlsoLike = ({ currentProductId }) => {
 };
 
 export default YouMayAlsoLike;
+
+
 
 
 

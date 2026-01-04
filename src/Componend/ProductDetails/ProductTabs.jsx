@@ -49,3 +49,4 @@ const ProductTabs = ({ description, specification }) => {
 
 export default ProductTabs;
 
+

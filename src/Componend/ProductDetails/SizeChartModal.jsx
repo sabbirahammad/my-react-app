@@ -70,3 +70,4 @@ const SizeChartModal = ({ isOpen, onClose }) => {
 export default SizeChartModal;
 
 
+

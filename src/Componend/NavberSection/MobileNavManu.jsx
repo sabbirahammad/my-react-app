@@ -171,3 +171,4 @@ const NavMenu = ({ isDarkMode, activeDropdown, setActiveDropdown }) => {
 };
 
 export default NavMenu;
+

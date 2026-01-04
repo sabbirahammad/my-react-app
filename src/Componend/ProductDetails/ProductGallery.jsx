@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import ImageZoomModal from './ImageZoomModal';
 
-const ProductGallery = ({ images }) => {
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+const ProductGallery = ({ images = [] }) => { // Default to empty array if images is not provided
+  const [selectedImage, setSelectedImage] = useState(images);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
 
   const openZoomModal = (image) => {
     setSelectedImage(image);
     setIsZoomOpen(true);
   };
+
+  // Ensure that images is an array before calling .map
+  const validImages = Array.isArray(images) ? images : [images]; // Changed to images
 
   return (
     <div className="space-y-4">
@@ -26,7 +29,7 @@ const ProductGallery = ({ images }) => {
 
       {/* Thumbnail Images */}
       <div className="flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600">
-        {images.map((img, index) => (
+        {validImages.map((img, index) => (
           <img
             key={index}
             src={img}
@@ -43,15 +46,17 @@ const ProductGallery = ({ images }) => {
       <ImageZoomModal
         isOpen={isZoomOpen}
         onClose={() => setIsZoomOpen(false)}
-        images={images}
+        images={validImages}
         selectedImage={selectedImage}
       />
-
     </div>
   );
 };
 
 export default ProductGallery;
+
+
+
 
 
 

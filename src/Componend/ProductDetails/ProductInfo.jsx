@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SizeChartModal from './SizeChartModal';
 import FeatureProductDescription from './FeatureProductDescription';
 import SuccessMessageModal from './SuccessMessageModal';
 import { FaStar, FaLock, FaGift, FaShippingFast } from 'react-icons/fa';
 import { useProduct } from '../../Context/UseContext';
+import { useAuth } from '../../Context/GoogleAuth';
 
 const ProductInfo = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState('M');
@@ -12,6 +14,8 @@ const ProductInfo = ({ product }) => {
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { addToCart } = useProduct();
+  const {token}=useAuth();
+  const navigate = useNavigate();
 
   const toggleWishlist = () => setIsWishlisted(!isWishlisted);
 
@@ -25,10 +29,37 @@ const ProductInfo = ({ product }) => {
     }
   };
 
-  const handleAddToCart = () => {
-    const item = { ...product, selectedSize, qty };
-    addToCart(item);
-    setShowSuccessModal(true);
+  const handleAddToCart = async () => {
+    if (!token) {
+      console.log('User not logged in, redirecting to auth page');
+      navigate('/auth');
+      return;
+    }
+
+    const item = {
+      ...product,
+      selectedSize,
+      size: selectedSize, // Include size for backend
+      qty,
+      quantity: qty // Ensure quantity is set
+    };
+
+    console.log('Adding to cart with size:', selectedSize);
+
+    try {
+      const result = await addToCart(item);
+
+      if (result.success) {
+        console.log('Product added to cart successfully');
+        setShowSuccessModal(true); // Show success message after adding to cart
+      } else {
+        console.error('Failed to add product to cart:', result.message);
+        alert(`Failed to add to cart: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      alert('Error adding product to cart. Please try again.');
+    }
   };
 
   return (
@@ -156,6 +187,10 @@ const ProductInfo = ({ product }) => {
 };
 
 export default ProductInfo;
+
+
+
+
 
 
 

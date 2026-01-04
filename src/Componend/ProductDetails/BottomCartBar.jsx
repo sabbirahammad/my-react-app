@@ -19,3 +19,4 @@ const BottomCartBar = ({ price, onAddToCart }) => {
 };
 
 export default BottomCartBar;
+

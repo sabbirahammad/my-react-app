@@ -29,3 +29,4 @@ const FloatingPromoBanner = () => {
 };
 
 export default FloatingPromoBanner;
+

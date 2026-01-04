@@ -45,3 +45,4 @@ const SellerInfoCard = ({ productName = 'Unknown Product' }) => {
 
 export default SellerInfoCard;
 
+

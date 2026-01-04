@@ -47,7 +47,7 @@ const UserDropdown = () => {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-[#2a2a2a] transition text-white"
       >
-        <span>{user.isLoggedIn ? `Hi, ${user.name}` : 'Login'}</span>
+        <span>MENU</span>
         <ChevronDown size={16} />
       </button>
 
@@ -66,11 +66,11 @@ const UserDropdown = () => {
                     Messages
                   </Link>
                 </li>
-                {/* <li>
-                  <Link to="/rfqs" onClick={handleMenuClick} className="block px-4 py-2 hover:bg-[#2d2d2d]">
-                    RFQs
+                <li>
+                  <Link to="/cartpayment" onClick={handleMenuClick} className="block px-4 py-2 hover:bg-[#2d2d2d]">
+                    Cart
                   </Link>
-                </li> */}
+                </li>
                 <li>
                   <Link to="/wishlist" onClick={handleMenuClick} className="block px-4 py-2 hover:bg-[#2d2d2d]">
                     Favorites
@@ -115,6 +115,7 @@ const UserDropdown = () => {
 };
 
 export default UserDropdown;
+
 
 
 

@@ -1,177 +1,87 @@
-import React, { useState } from 'react';
-
-const categoryData = [
-  {
-    name: 'Women\'s & Girls\' Fashion',
-    subcategories: [],
-  },
-  {
-    name: 'Men\'s & Boys\' Fashion',
-    subcategories: [
-      {
-        name: 'Eyewear',
-        items: [],
-      },
-      {
-        name: 'Shoes',
-        items: [],
-      },
-      {
-        name: 'Accessories',
-        items: [
-          'Brooches and Cufflinks',
-          'Umbrellas',
-          'Ties',
-          'Bow Ties',
-          'Hats & Caps',
-          'Belts',
-        ],
-      },
-      {
-        name: 'Muslim Wear',
-        items: [],
-      },
-      {
-        name: 'Clothing',
-        items: [],
-      },
-    ],
-  },
-  {
-    name: 'Electronic Accessories',
-    subcategories: [],
-  },
-  {
-    name: 'TV & Home Appliances',
-    subcategories: [],
-  },
-  {
-    name: 'Electronics Device',
-    subcategories: [],
-  },
-  {
-    name: 'Mother & Baby',
-    subcategories: [],
-  },
-  {
-    name: 'Automotive & Motorbike',
-    subcategories: [],
-  },
-  {
-    name: 'Sports & Outdoors',
-    subcategories: [],
-  },
-  {
-    name: 'Home & Lifestyle',
-    subcategories: [],
-  },
-  {
-    name: 'Groceries',
-    subcategories: [],
-  },
-  {
-    name: 'Health & Beauty',
-    subcategories: [],
-  },
-  {
-    name: 'Watches, Bags, Jewellery',
-    subcategories: [],
-  },
-];
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useProduct } from '../../Context/UseContext';
 
 const CategoryMenu = () => {
-  const [activeMain, setActiveMain] = useState(null);
-  const [activeSub, setActiveSub] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const { categories, loading, error } = useProduct();
+  // useEffect(() => {
+  //   const fetchCategories = async () => {
+  //     try {
+  //       const res = await axios.get('http://localhost:3000/subcategories');
+  //       setCategoryData(res.data);
+  //     } catch (error) {
+  //       console.error('Failed to fetch categories:', error);
+  //     }
+  //   };
+
+  //   fetchCategories();
+  // }, []);
 
   return (
-    <div className="bg-[#1c1c1c] text-white text-sm w-full shadow-md">
+    <div className="bg-[#1c1c1c] text-white text-[10px] sm:text-sm w-full shadow-md">
       {/* Desktop View */}
-      <div className="hidden md:flex h-[500px]">
+      <div className="hidden lg:flex h-[400px] xl:h-[500px]">
         {/* Main Category */}
-        <div className="w-60 bg-[#2c2c2c]">
-          {categoryData.map((cat, i) => (
+        <div className="w-48 xl:w-60 bg-[#2c2c2c]">
+          {categories.map((category, i) => (
             <div
-              key={i}
+              key={category.id}
               onMouseEnter={() => {
-                setActiveMain(i);
-                setActiveSub(null);
+                setActiveCategory(i);
               }}
-              className={`px-4 py-2 cursor-pointer hover:bg-[#3d3d3d] ${
-                activeMain === i ? 'bg-[#3d3d3d]' : ''
+              className={`px-3 xl:px-4 py-2 xl:py-3 cursor-pointer hover:bg-[#3d3d3d] transition-colors ${
+                activeCategory === i ? 'bg-[#3d3d3d]' : ''
               }`}
             >
-              {cat.name}
+              {category.title}
             </div>
           ))}
         </div>
 
-        {/* Sub Category */}
-        {activeMain !== null && categoryData[activeMain].subcategories?.length > 0 && (
-          <div className="w-64 bg-[#1e1e1e] border-l border-gray-800">
-            {categoryData[activeMain].subcategories.map((sub, j) => (
-              <div
-                key={j}
-                onMouseEnter={() => setActiveSub(j)}
-                className={`px-4 py-2 cursor-pointer hover:bg-[#333] ${
-                  activeSub === j ? 'bg-[#333]' : ''
-                }`}
+        {/* Category Items */}
+        {activeCategory !== null && categories[activeCategory]?.items?.length > 0 && (
+          <div className="w-52 xl:w-64 bg-[#1e1e1e] border-l border-gray-800">
+            {categories[activeCategory].items.map((item, j) => (
+              <Link
+                key={`${categories[activeCategory].id}-${j}`}
+                to={`/category/${encodeURIComponent(item.toLowerCase().replace(/\s+/g, '-'))}`}
               >
-                {sub.name}
-              </div>
+                <div className="px-3 xl:px-4 py-2 xl:py-3 hover:text-orange-400 cursor-pointer hover:bg-gray-800 transition-colors text-[9px] xl:text-sm">{item}</div>
+              </Link>
             ))}
           </div>
         )}
-
-        {/* Sub-Sub Category */}
-        {activeMain !== null &&
-          activeSub !== null &&
-          categoryData[activeMain].subcategories[activeSub]?.items?.length > 0 && (
-            <div className="w-64 bg-[#2b2b2b] border-l border-gray-800">
-              {categoryData[activeMain].subcategories[activeSub].items.map((item, k) => (
-                <div key={k} className="px-4 py-2 hover:text-orange-400 cursor-pointer">
-                  {item}
-                </div>
-              ))}
-            </div>
-          )}
       </div>
 
       {/* Mobile View */}
-      <div className="block md:hidden divide-y divide-gray-700">
-        {categoryData.map((cat, i) => (
-          <div key={i} className="px-4 py-3">
+      <div className="block lg:hidden divide-y divide-gray-700 max-h-[400px] overflow-y-auto">
+        {categories.map((category, i) => (
+          <div key={category.id} className="px-3 sm:px-4 py-3">
             <button
-              onClick={() => setActiveMain(activeMain === i ? null : i)}
-              className="w-full text-left font-semibold"
+              onClick={() => setActiveCategory(activeCategory === i ? null : i)}
+              className="w-full text-left font-semibold text-[11px] sm:text-sm hover:text-yellow-400 transition-colors flex items-center justify-between"
             >
-              {cat.name}
+              <span>{category.title}</span>
+              <span className={`transform transition-transform ${activeCategory === i ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
             </button>
 
-            {/* Subcategories */}
-            {activeMain === i && cat.subcategories.length > 0 && (
-              <div className="mt-2 ml-3 space-y-2">
-                {cat.subcategories.map((sub, j) => (
-                  <div key={j}>
-                    <button
-                      onClick={() => setActiveSub(activeSub === j ? null : j)}
-                      className="w-full text-left text-sm"
+            {activeCategory === i && category.items?.length > 0 && (
+              <ul className="mt-2 ml-2 sm:ml-3 text-gray-300 space-y-1 text-[10px] sm:text-sm">
+                {category.items.map((item, j) => (
+                  <li key={`${category.id}-${j}`}>
+                    <Link
+                      to={`/category/${encodeURIComponent(item.toLowerCase().replace(/\s+/g, '-'))}`}
+                      className="block py-1 hover:text-yellow-400 transition-colors"
                     >
-                      ▸ {sub.name}
-                    </button>
-
-                    {/* Sub-sub-items */}
-                    {activeSub === j && sub.items.length > 0 && (
-                      <ul className="ml-4 mt-1 text-gray-300 space-y-1 text-xs">
-                        {sub.items.map((item, k) => (
-                          <li key={k} className="hover:text-yellow-400 cursor-pointer">
-                            - {item}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+                      - {item}
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </div>
         ))}
@@ -181,4 +91,8 @@ const CategoryMenu = () => {
 };
 
 export default CategoryMenu;
+
+
+
+
 

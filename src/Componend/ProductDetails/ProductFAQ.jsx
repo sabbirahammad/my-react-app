@@ -50,3 +50,4 @@ const ProductFAQ = () => {
 };
 
 export default ProductFAQ;
+

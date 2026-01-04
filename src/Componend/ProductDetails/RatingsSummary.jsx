@@ -40,3 +40,4 @@ const RatingsSummary = ({ average = 4.3, total = 187, breakdown = [90, 50, 30, 1
 };
 
 export default RatingsSummary;
+

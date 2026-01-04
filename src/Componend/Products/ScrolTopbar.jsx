@@ -85,3 +85,4 @@ const TopBar = ({ onSearch }) => {
 };
 
 export default TopBar;
+

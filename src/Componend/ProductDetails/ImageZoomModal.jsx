@@ -113,3 +113,4 @@ const ImageZoomModal = ({ isOpen, onClose, images, selectedImage }) => {
 };
 
 export default ImageZoomModal;
+

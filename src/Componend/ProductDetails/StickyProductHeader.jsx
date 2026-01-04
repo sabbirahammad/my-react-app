@@ -106,3 +106,4 @@ const SearchBar = ({ isSidebarOpen, hideSearchBar }) => {
 export default SearchBar;
 
 
+

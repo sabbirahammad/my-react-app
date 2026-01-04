@@ -25,3 +25,4 @@ const LimitedTimeOffer = ({ durationInHours = 2 }) => {
 };
 
 export default LimitedTimeOffer;
+
